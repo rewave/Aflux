@@ -6,14 +6,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.aflux.fragments.Gestures;
 import com.aflux.fragments.Metadata;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
+import java.util.List;
 
-public class MainActivity extends ActionBarActivity implements Metadata.OnFragmentInteractionListener{
+
+public class MainActivity extends ActionBarActivity implements Metadata.OnFragmentInteractionListener, Gestures.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,22 +38,54 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
 
     // Fragment Interactions
     @Override
-    public void onProceedButtonPressed(String name, String sex, String age) {
+    public void onProceedButtonPressed(String name, String sex, int age) {
         // Save this user on parse, get id and pass it to collector fragment
-        ParseObject me = new ParseObject("People");
+        final ParseObject me = new ParseObject("People");
         me.put("name", name);
         me.put("sex", sex);
-        me.put("age", Integer.valueOf(age));
+        me.put("age", age);
+        me.pinInBackground();
         me.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                try {
+                if (e == null) {
+                    String meId = me.getObjectId();
+                    setTitle((String) me.get("name"));
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.container, Gestures.newInstance(meId))
+                            .commit();
+                } else {
                     e.printStackTrace();
-                }
-                catch (NullPointerException e1) {
-                    Log.i("Main", "saved");
                 }
             }
         });
     }
+
+    @Override
+    public void onResumeButtonPressed(String name) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("People");
+
+        query.whereEqualTo("name", name);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                if (e==null) {
+                    if (parseObjects.size() == 1) {
+                        final ParseObject me = parseObjects.get(0);
+                        me.pinInBackground();
+                        String meId = me.getObjectId();
+                        setTitle((String) me.get("name"));
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.container, Gestures.newInstance(meId))
+                                .commit();
+                    } else {
+                        Log.d("Main activity", "No match found, register first");
+                    }
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
 }

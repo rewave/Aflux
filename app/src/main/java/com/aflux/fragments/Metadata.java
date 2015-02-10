@@ -6,14 +6,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 
 import com.aflux.R;
+import com.andreabaccega.widget.FormEditText;
 import com.gc.materialdesign.views.ButtonRectangle;
 
 public class Metadata extends Fragment {
@@ -43,6 +40,9 @@ public class Metadata extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        ButtonRectangle resume= (ButtonRectangle) getActivity().findViewById(R.id.resume);
+        resume.setOnClickListener(resumeListener);
+
         ButtonRectangle proceed = (ButtonRectangle) getActivity().findViewById(R.id.proceed);
         proceed.setOnClickListener(proceedListener);
     }
@@ -67,17 +67,38 @@ public class Metadata extends Fragment {
     View.OnClickListener proceedListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String name = ((EditText) getActivity().findViewById(R.id.name)).getText().toString();
-            String age = ((EditText) getActivity().findViewById(R.id.age)).getText().toString();
-            String sex = ((RadioButton) getActivity().findViewById(((RadioGroup) getActivity().findViewById(R.id.sexes)).getCheckedRadioButtonId())).getText().toString();
-            if (mListener != null) {
-                mListener.onProceedButtonPressed(name, sex, age);
+            FormEditText nameField = (FormEditText) getActivity().findViewById(R.id.name);
+            FormEditText ageField = (FormEditText) getActivity().findViewById(R.id.age);
+
+            if (nameField.testValidity() && ageField.testValidity())
+            {
+                ((ButtonRectangle) v).setText("•••");
+                String name = nameField.getText().toString();
+                int age = Integer.valueOf(ageField.getText().toString());
+                String sex = ((RadioButton) getActivity().findViewById(((RadioGroup) getActivity().findViewById(R.id.sexes)).getCheckedRadioButtonId())).getText().toString();
+                if (mListener != null) {
+                    mListener.onProceedButtonPressed(name, sex, age);
+                }
+            }
+        }
+    };
+
+    View.OnClickListener resumeListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            FormEditText nameField = (FormEditText) getActivity().findViewById(R.id.name);
+
+            if (nameField.testValidity()) {
+                if (mListener != null) {
+                    ((ButtonRectangle) v).setText("•••");
+                    mListener.onResumeButtonPressed(nameField.getText().toString());
+                }
             }
         }
     };
 
     public interface OnFragmentInteractionListener {
-        public void onProceedButtonPressed(String name, String sex, String age);
+        public void onProceedButtonPressed(String name, String sex, int age);
+        public void onResumeButtonPressed(String name);
     }
-
 }

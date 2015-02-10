@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:validation="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -10,7 +11,8 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
 
         <TextView
             android:id="@+id/name_label"
@@ -19,19 +21,25 @@
             android:text="@string/name"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
-        <EditText
+        <com.andreabaccega.widget.FormEditText
+            validation:testType="personFullName"
+            validation:emptyErrorString="@string/error_name_empty"
+            validation:testErrorString="@string/error_name_invalid"
             android:ems="10"
             android:id="@+id/name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:background="@drawable/edit_text_style" />
 
         </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
 
         <TextView
         android:id="@+id/age_label"
@@ -40,19 +48,26 @@
         android:text="@string/age"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-        <EditText
+        <com.andreabaccega.widget.FormEditText
+            validation:testType="numeric"
+            validation:emptyErrorString="@string/error_name_empty"
+            validation:testErrorString="@string/error_name_invalid"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
             android:ems="10"
             android:id="@+id/age"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName" />
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:background="@drawable/edit_text_style" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
 
         <TextView
             android:id="@+id/sex_label"
@@ -85,13 +100,23 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <com.gc.materialdesign.views.ButtonRectangle
+            android:id="@+id/resume"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_height="wrap_content"
+            android:background="@color/button_resume"
+            android:text="@string/resume" />
 
         <com.gc.materialdesign.views.ButtonRectangle
             android:id="@+id/proceed"
-            android:layout_width="fill_parent"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
             android:layout_height="wrap_content"
-            android:background="#333"
+            android:background="@color/button_proceed"
             android:text="@string/proceed" />
 
     </LinearLayout>
