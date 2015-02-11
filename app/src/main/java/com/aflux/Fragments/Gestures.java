@@ -1,4 +1,4 @@
-package com.aflux.fragments;
+package com.aflux.Fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.aflux.R;
-import com.aflux.fragments.dummy.DummyContent;
+import com.aflux.Fragments.dummy.GesturesContent;
 
 /**
  * A fragment representing a list of Items.
@@ -62,9 +62,8 @@ public class Gestures extends Fragment implements AbsListView.OnItemClickListene
             meId = getArguments().getString(ARG_PARAM1);
         }
 
-        // TODO: Change Adapter to display your content
-        mAdapter = new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS);
+        mAdapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, android.R.id.text1, GesturesContent.ITEMS);
     }
 
     @Override
@@ -74,7 +73,7 @@ public class Gestures extends Fragment implements AbsListView.OnItemClickListene
 
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
-        ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
+        mListView.setAdapter(mAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);

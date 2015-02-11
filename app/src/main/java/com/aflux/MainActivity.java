@@ -3,13 +3,10 @@ package com.aflux;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 
-import com.aflux.fragments.Gestures;
-import com.aflux.fragments.Metadata;
+import com.aflux.Fragments.Gestures;
+import com.aflux.Fragments.Metadata;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
