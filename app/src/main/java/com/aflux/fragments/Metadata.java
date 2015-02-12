@@ -1,4 +1,4 @@
-package com.aflux.Fragments;
+package com.aflux.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;

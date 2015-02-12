@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
-import com.aflux.Fragments.Gestures;
-import com.aflux.Fragments.Metadata;
+import com.aflux.fragments.RemainingGestures;
+import com.aflux.fragments.Metadata;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -16,7 +16,7 @@ import com.parse.SaveCallback;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity implements Metadata.OnFragmentInteractionListener, Gestures.OnFragmentInteractionListener{
+public class MainActivity extends ActionBarActivity implements Metadata.OnFragmentInteractionListener, RemainingGestures.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
                     String meId = me.getObjectId();
                     setTitle((String) me.get("name"));
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, Gestures.newInstance(meId))
+                            .replace(R.id.container, RemainingGestures.newInstance(meId))
                             .commit();
                 } else {
                     e.printStackTrace();
@@ -73,7 +73,7 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
                         String meId = me.getObjectId();
                         setTitle((String) me.get("name"));
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.container, Gestures.newInstance(meId))
+                                .replace(R.id.container, RemainingGestures.newInstance(meId))
                                 .commit();
                     } else {
                         Log.d("Main activity", "No match found, register first");
