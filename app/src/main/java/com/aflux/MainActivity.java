@@ -4,8 +4,11 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
-import com.aflux.fragments.RemainingGestures;
-import com.aflux.fragments.Metadata;
+import com.aflux.core.Gesture;
+import com.aflux.core.Person;
+import com.aflux.core.SensorValue;
+import com.aflux.ui.fragments.RemainingGestures;
+import com.aflux.ui.fragments.Metadata;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -24,7 +27,10 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
         setContentView(R.layout.activity_main);
 
         Parse.enableLocalDatastore(this);
-        Parse.initialize(this, "XyXr94ZIIctDpsiZxfZMyVOvks07Xw7evChcc6WO", "ObpL774pWlxmplT6Ke9oj5763KCwaMzQ3ALCONaF");
+        ParseObject.registerSubclass(Person.class);
+        ParseObject.registerSubclass(Gesture.class);
+//        ParseObject.registerSubclass(SensorValue.class);
+        //Parse.initialize(this, Config.parse_app_id, Config.parse_app_secret);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -37,10 +43,10 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
     @Override
     public void onProceedButtonPressed(String name, String sex, int age) {
         // Save this user on parse, get id and pass it to collector fragment
-        final ParseObject me = new ParseObject("People");
-        me.put("name", name);
-        me.put("sex", sex);
-        me.put("age", age);
+        final Person me = new Person();
+        me.setName(name);
+        me.setAge(age);
+        me.setSex(sex);
         me.pinInBackground();
         me.saveInBackground(new SaveCallback() {
             @Override

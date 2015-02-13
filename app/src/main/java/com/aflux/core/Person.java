@@ -1,18 +1,15 @@
 package com.aflux.core;
 
-import com.aflux.repository.People;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
 @ParseClassName("People")
 public class Person extends ParseObject {
 
+    private OnCoreInteractionListener mListner;
+
     public Person() {
 
-    }
-
-    public static People repository() {
-        return People.newInstance();
     }
 
     public String getName() {
@@ -39,5 +36,8 @@ public class Person extends ParseObject {
         put("sex", sex);
     }
 
+    public interface OnCoreInteractionListener {
+
+    }
 }
 

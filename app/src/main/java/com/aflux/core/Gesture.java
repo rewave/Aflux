@@ -1,6 +1,8 @@
 package com.aflux.core;
 
 
+import android.support.v4.app.Fragment;
+
 import com.aflux.repository.Gestures;
 import com.parse.FindCallback;
 import com.parse.ParseClassName;
@@ -20,14 +22,14 @@ public class Gesture extends ParseObject {
         // Require Empty Constructor
     }
 
-    public static Gestures repository() {
-        return Gestures.newInstance();
-    }
-
     public String getName() {
         return getString("name");
     }
     // Don't need a setter because sensor names are fixed.
+
+    public String getDescription() {
+        return getString("description");
+    }
 
 
 //    /*

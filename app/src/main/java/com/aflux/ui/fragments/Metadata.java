@@ -1,4 +1,4 @@
-package com.aflux.fragments;
+package com.aflux.ui.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,10 +6,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.aflux.R;
+import com.andreabaccega.formedittextvalidator.Validator;
 import com.andreabaccega.widget.FormEditText;
 import com.gc.materialdesign.views.ButtonRectangle;
 
