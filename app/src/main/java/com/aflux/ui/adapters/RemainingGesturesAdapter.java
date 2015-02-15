@@ -41,17 +41,15 @@ public class RemainingGesturesAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup parent) {
 
         if (view == null) {
-            view = inflater.inflate(android.R.layout.simple_list_item_1, null);
+            view = inflater.inflate(android.R.layout.simple_list_item_2, null);
         }
 
         TextView gestureName = (TextView) view.findViewById(android.R.id.text1);
+        TextView status = (TextView) view.findViewById(android.R.id.text2); // done or not
         Gesture gesture = this.getItem(position);
         gestureName.setText(gesture.getName());
+        status.setText(gesture.getStatus());
 
         return view;
-    }
-
-    public interface OnListInteractionListener {
-        public void onGestureItemPressed();
     }
 }

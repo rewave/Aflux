@@ -74,7 +74,7 @@ public class Metadata extends Fragment {
 
             if (nameField.testValidity() && ageField.testValidity())
             {
-                ((ButtonRectangle) v).setText("•••");
+                ((ButtonRectangle) v).setText(getActivity().getString(R.string.loading));
                 String name = nameField.getText().toString();
                 int age = Integer.valueOf(ageField.getText().toString());
                 String sex = ((RadioButton) getActivity().findViewById(((RadioGroup) getActivity().findViewById(R.id.sexes)).getCheckedRadioButtonId())).getText().toString();
@@ -92,7 +92,7 @@ public class Metadata extends Fragment {
 
             if (nameField.testValidity()) {
                 if (mListener != null) {
-                    ((ButtonRectangle) v).setText("•••");
+                    ((ButtonRectangle) v).setText(getActivity().getString(R.string.loading));
                     mListener.onResumeButtonPressed(nameField.getText().toString());
                 }
             }

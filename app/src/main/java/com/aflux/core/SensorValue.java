@@ -4,18 +4,27 @@ import android.hardware.SensorEvent;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
+import com.parse.ParseRelation;
 
-@ParseClassName("SensorValue")
+@ParseClassName("SensorValues")
 public class SensorValue extends ParseObject {
 
     private SensorEvent sensorEvent;
 
-    SensorValue() {
+    public SensorValue() {
 
     }
 
-    SensorValue(SensorEvent sensorEvent) {
+    public SensorValue(SensorEvent sensorEvent) {
         this.sensorEvent = sensorEvent;
+        setAx(sensorEvent.values[0]);
+        setAy(sensorEvent.values[1]);
+        setAz(sensorEvent.values[2]);
+    }
+
+    public void setPersonGesture(ParseObject personGesture) {
+        ParseRelation relation = this.getRelation("person_gesture");
+        relation.add(personGesture);
     }
 
     public void setAx(float ax) {

@@ -1,12 +1,14 @@
 package com.aflux;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 import com.aflux.core.Gesture;
 import com.aflux.core.Person;
 import com.aflux.core.SensorValue;
+import com.aflux.ui.fragments.RecordData;
 import com.aflux.ui.fragments.RemainingGestures;
 import com.aflux.ui.fragments.Metadata;
 import com.parse.FindCallback;
@@ -19,7 +21,7 @@ import com.parse.SaveCallback;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity implements Metadata.OnFragmentInteractionListener, RemainingGestures.OnFragmentInteractionListener{
+public class MainActivity extends ActionBarActivity implements Metadata.OnFragmentInteractionListener, RemainingGestures.OnFragmentInteractionListener, RecordData.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +31,8 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
         Parse.enableLocalDatastore(this);
         ParseObject.registerSubclass(Person.class);
         ParseObject.registerSubclass(Gesture.class);
-//        ParseObject.registerSubclass(SensorValue.class);
-        //Parse.initialize(this, Config.parse_app_id, Config.parse_app_secret);
+        ParseObject.registerSubclass(SensorValue.class);
+        Parse.initialize(this, Config.parse_app_id, Config.parse_client_key);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -56,6 +58,7 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
                     setTitle((String) me.get("name"));
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.container, RemainingGestures.newInstance(meId))
+                            .addToBackStack(RemainingGestures.class.getName())
                             .commit();
                 } else {
                     e.printStackTrace();
@@ -80,6 +83,7 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
                         setTitle((String) me.get("name"));
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.container, RemainingGestures.newInstance(meId))
+                                .addToBackStack(RemainingGestures.class.getName())
                                 .commit();
                     } else {
                         Log.d("Main activity", "No match found, register first");
@@ -91,4 +95,11 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
         });
     }
 
+    @Override
+    public void onGestureClicked(String meId, String gestureId) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, RecordData.newInstance(meId, gestureId))
+                .addToBackStack(RecordData.class.getName())
+                .commit();
+    }
 }

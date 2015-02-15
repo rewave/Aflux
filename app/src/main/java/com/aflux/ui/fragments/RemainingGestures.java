@@ -7,22 +7,29 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.aflux.R;
 import com.aflux.core.Gesture;
+import com.aflux.core.Person;
+import com.aflux.core.SensorValue;
 import com.aflux.repository.Gestures;
+import com.aflux.repository.People;
 import com.aflux.ui.adapters.RemainingGesturesAdapter;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 
 import java.util.List;
 
-public class RemainingGestures extends Fragment implements Gestures.OnRepositoryInteractionListener {
+public class RemainingGestures extends Fragment implements Gestures.OnRepositoryInteractionListener, People.OnRepositoryInteractionListener, AdapterView.OnItemClickListener{
 
     private static final String ARG_PARAM1 = "meId";
     private final Gestures gestureRepo = Gestures.newInstance(this);
 
     private String meId;
+    private Person me;
+    private List<Gesture> gestures;
     private final static String TAG = "RGFragment";
 
     private OnFragmentInteractionListener mListener;
@@ -44,6 +51,11 @@ public class RemainingGestures extends Fragment implements Gestures.OnRepository
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             meId = getArguments().getString(ARG_PARAM1);
+            try {
+                me = ParseQuery.getQuery(Person.class).get(meId);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -68,7 +80,7 @@ public class RemainingGestures extends Fragment implements Gestures.OnRepository
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        gestureRepo.get();
+        gestureRepo.get(); // calls onGesturesFound() on completion
     }
 
     @Override
@@ -77,16 +89,15 @@ public class RemainingGestures extends Fragment implements Gestures.OnRepository
         mListener = null;
     }
 
-    /*
-        Repository Interactions
+    /**
+     * Repository Interactions
      */
 
     @Override
     public void onGesturesFound(List<Gesture> gestures) {
-        Log.i(TAG, "Here");
-        ListView remainingGesturesList = (ListView) getActivity().findViewById(R.id.gestures_list);
-        RemainingGesturesAdapter remainingGesturesAdapter = new RemainingGesturesAdapter(getActivity(), gestures);
-        remainingGesturesList.setAdapter(remainingGesturesAdapter);
+        People peopleRepository = People.newInstance(this);
+        this.gestures = gestures;
+        peopleRepository.findGesturesStatus(me, gestures); // calls onGesturesStatusFound() on completion
     }
 
     @Override
@@ -94,7 +105,42 @@ public class RemainingGestures extends Fragment implements Gestures.OnRepository
         e.printStackTrace();
     }
 
+    @Override
+    public void onSensorValuesFound(List<SensorValue> sensorValues) {}
+
+    @Override
+    public void onSensorValueFindException(ParseException e) {
+        e.printStackTrace();
+    }
+
+    @Override
+    public void onPeopleFound(List<Person> people){}
+
+    @Override
+    public void onPersonFindException(ParseException e) {
+        e.printStackTrace();
+    }
+
+    @Override
+    public void onGesturesStatusFound(List<Gesture> gestures) {
+        ListView remainingGesturesList = (ListView) getActivity().findViewById(R.id.gestures_list);
+        RemainingGesturesAdapter remainingGesturesAdapter = new RemainingGesturesAdapter(getActivity(), gestures);
+        remainingGesturesList.setAdapter(remainingGesturesAdapter);
+        remainingGesturesList.setOnItemClickListener(this);
+    }
+
+    @Override
+    public void onGestureStatusFindException(ParseException e) {
+        e.printStackTrace();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
+        mListener.onGestureClicked(meId, gestures.get(position).getObjectId());
+    }
+
     public interface OnFragmentInteractionListener {
+        public void onGestureClicked(String meId, String gestureId);
     }
 
 }

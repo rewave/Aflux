@@ -19,9 +19,14 @@ android {
     }
 }
 
+repositories {
+    // maven { url 'http://raw.github.com/emreaktrk/WaveView/master/repository/' }
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.github.navasmdc:MaterialDesign:1.+@aar'
     compile 'com.andreabaccega:android-form-edittext:1.1.0@aar'
+    // compile 'com.john.waveview:release:1.0.0@aar'
 }

@@ -15,8 +15,7 @@ import java.util.List;
 
 @ParseClassName("Gestures")
 public class Gesture extends ParseObject {
-
-//    private networkInteractionListener mListener;
+   private String status = "not done";
 
     public Gesture() {
         // Require Empty Constructor
@@ -25,37 +24,24 @@ public class Gesture extends ParseObject {
     public String getName() {
         return getString("name");
     }
-    // Don't need a setter because sensor names are fixed.
 
     public String getDescription() {
         return getString("description");
     }
 
+    public String getTag() {
+        return getString("tag");
+    }
 
-//    /*
-//        Relations
-//     */
-//    public void findSensorValues() {
-//        ParseQuery<SensorValue> query = ParseQuery.getQuery("GestureSensorValues");
-//        query.findInBackground(new FindCallback<SensorValue>() {
-//            @Override
-//            public void done(List<SensorValue> sensorValues, ParseException e) {
-//                mListener.onSensorValuesFound(sensorValues);
-//            }
-//        });
-//    }
-//
-//    public void setSensorValues(List<SensorValue> sensorValues) {
-//        // can be on a thread, but parse probably uses some kind of scheduling.
-//        for (SensorValue sensorValue : sensorValues) {
-//            final ParseObject gestureSensorValue = new ParseObject("GestureSensorValues");
-//            gestureSensorValue.put("gesture", this);
-//            gestureSensorValue.put("sensor_value", sensorValue);
-//            gestureSensorValue.saveInBackground();
-//        }
-//    }
-//
-//    public interface networkInteractionListener {
-//        public void onSensorValuesFound(List<SensorValue> sensorValues);
-//    }
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean s) {
+        if (s) {
+            status = "done";
+        } else {
+            status = "not done";
+        }
+    }
 }
