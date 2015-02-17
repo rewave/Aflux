@@ -9,8 +9,11 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -53,7 +56,7 @@ public class People implements Person.OnCoreInteractionListener{
                 if (e == null) {
                     mListener.onPeopleFound(people);
                 } else {
-                    mListener.onPersonFindException(e);
+                    e.printStackTrace();
                 }
             }
         });
@@ -93,17 +96,26 @@ public class People implements Person.OnCoreInteractionListener{
                     */
 
                 } else {
-                    mListener.onGestureStatusFindException(e);
+                    e.printStackTrace();
                 }
             }
         });
     }
 
+    public void setPersonGesture(Person p, Gesture g, int sample_number) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("PersonGestures");
+        final ParseObject personGesture = new ParseObject("PersonGestures");
+
+        ParseRelation relation = personGesture.getRelation("gesture");
+        relation.add(g);
+        relation = personGesture.getRelation("person");
+        relation.add(p);
+        personGesture.put("sample_number", sample_number);
+        personGesture.saveInBackground();
+    }
+
     public interface OnRepositoryInteractionListener {
         public void onPeopleFound(List<Person> people);
-        public void onPersonFindException(ParseException e);
-
-        public void onGesturesStatusFound(List<Gesture> gestures);
-        public void onGestureStatusFindException(ParseException e);
+        public void onGesturesStatusFound(List<Gesture> gestures);;
     }
 }

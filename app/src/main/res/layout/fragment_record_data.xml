@@ -19,47 +19,39 @@
             android:text="@string/hold_to_record"
             android:background="@color/primary"
             android:id="@+id/hold_to_record" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/gesture_name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="@string/loading"
+                android:gravity="center_vertical"
+                android:paddingTop="4dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="4dp"
+                android:paddingLeft="0dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/loading"
+                android:id="@+id/status" />
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="false"
+                android:max="100"
+                android:id="@+id/progress" />
         </LinearLayout>
-
-    <TextView
-        android:id="@+id/gesture_name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="20dp"
-        android:gravity="center_horizontal"
-        android:textSize="30sp"
-        android:text="@string/loading" />
-
-    <ProgressBar
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="false"
-        android:max="100"
-        android:id="@+id/progress" />
-
-    <LinearLayout
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp">
-
-        <SeekBar
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/threshold_slider"
-            android:layout_weight="1"
-            android:max="100"
-            android:progress="25"
-            android:indeterminate="false" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/threshold"
-            android:padding="5dp"
-            android:width="40dp" />
-
     </LinearLayout>
 </LinearLayout>
 

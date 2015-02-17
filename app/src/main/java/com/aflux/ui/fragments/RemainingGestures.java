@@ -117,21 +117,11 @@ public class RemainingGestures extends Fragment implements Gestures.OnRepository
     public void onPeopleFound(List<Person> people){}
 
     @Override
-    public void onPersonFindException(ParseException e) {
-        e.printStackTrace();
-    }
-
-    @Override
     public void onGesturesStatusFound(List<Gesture> gestures) {
         ListView remainingGesturesList = (ListView) getActivity().findViewById(R.id.gestures_list);
         RemainingGesturesAdapter remainingGesturesAdapter = new RemainingGesturesAdapter(getActivity(), gestures);
         remainingGesturesList.setAdapter(remainingGesturesAdapter);
         remainingGesturesList.setOnItemClickListener(this);
-    }
-
-    @Override
-    public void onGestureStatusFindException(ParseException e) {
-        e.printStackTrace();
     }
 
     @Override
