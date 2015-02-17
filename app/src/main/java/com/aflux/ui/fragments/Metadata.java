@@ -1,8 +1,13 @@
 package com.aflux.ui.fragments;
 
 import android.app.Activity;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +16,15 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.aflux.R;
+import com.aflux.core.Person;
+import com.aflux.repository.People;
 import com.andreabaccega.formedittextvalidator.Validator;
 import com.andreabaccega.widget.FormEditText;
 import com.gc.materialdesign.views.ButtonRectangle;
 
 public class Metadata extends Fragment {
     private OnFragmentInteractionListener mListener;
+    private final static String TAG = "Metadata";
 
     public static Metadata newInstance() {
         return new Metadata();

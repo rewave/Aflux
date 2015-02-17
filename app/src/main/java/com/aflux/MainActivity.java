@@ -1,5 +1,9 @@
 package com.aflux;
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -22,6 +26,8 @@ import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity implements Metadata.OnFragmentInteractionListener, RemainingGestures.OnFragmentInteractionListener, RecordData.OnFragmentInteractionListener{
+
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +62,11 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
                 if (e == null) {
                     String meId = me.getObjectId();
                     setTitle((String) me.get("name"));
+
+                    Person savedMe = Person.createWithoutData(Person.class, meId);
+                    savedMe = setDeviceInfo(savedMe);
+                    savedMe.saveInBackground();
+
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.container, RemainingGestures.newInstance(meId))
                             .addToBackStack(RemainingGestures.class.getName())
@@ -93,6 +104,40 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
                 }
             }
         });
+    }
+
+    public Person setDeviceInfo(Person me) {
+        String manufacturer = Build.MANUFACTURER;
+        String model = Build.MODEL;
+
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        int minDelay = accelerometer.getMinDelay();
+        float maxRange = accelerometer.getMaximumRange();
+        String name = accelerometer.getName();
+        float power = accelerometer.getPower();
+        float resolution = accelerometer.getResolution();
+        String vendor = accelerometer.getVendor();
+
+        Log.i(TAG, "manufacturer " + manufacturer);
+        Log.i(TAG, "model " + model);
+        Log.i(TAG, "minDelay " + String.valueOf(minDelay));
+        Log.i(TAG, "maxRange " + String.valueOf(maxRange));
+        Log.i(TAG, "name " + String.valueOf(name));
+        Log.i(TAG, "power " + String.valueOf(power));
+        Log.i(TAG, "resolution " + String.valueOf(resolution));
+        Log.i(TAG, "vendor " + String.valueOf(vendor));
+
+        me.setDeviceManufacturer(manufacturer);
+        me.setDeviceModel(model);
+        me.setAccMinDelay(minDelay);
+        me.setAccMaxRange(maxRange);
+        me.setAccName(name);
+        me.setAccPower(power);
+        me.setAccResolution(resolution);
+        me.setAccVendor(vendor);
+
+        return me;
     }
 
     @Override
