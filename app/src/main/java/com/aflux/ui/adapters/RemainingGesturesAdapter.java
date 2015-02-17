@@ -22,6 +22,18 @@ public class RemainingGesturesAdapter extends BaseAdapter {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
+    public boolean areAllItemsEnabled()
+    {
+        return false;
+    }
+    public boolean isEnabled(int position)
+    {
+        if (gestures.get(position).getStatus() == "not done") {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public int getCount() {
         return gestures.size();

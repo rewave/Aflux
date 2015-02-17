@@ -10,8 +10,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.aflux.Config;
@@ -21,15 +25,17 @@ import com.aflux.core.Person;
 import com.aflux.core.SensorValue;
 import com.aflux.repository.Gestures;
 import com.aflux.repository.People;
+import com.gc.materialdesign.views.ButtonRectangle;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecordData extends Fragment implements SensorEventListener{
+public class RecordData extends Fragment implements SensorEventListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener{
     private static final String ARG_PARAM1 = "meId";
     private static final String ARG_PARAM2 = "gestureId";
 
@@ -44,6 +50,13 @@ public class RecordData extends Fragment implements SensorEventListener{
     private List<SensorValue> sensorValues = new ArrayList<>();
     private SensorManager sensorManager;
     private Sensor accelerometer;
+    private boolean recordData = false;
+
+    private ButtonRectangle hold_to_send;
+    private TextView threshold;
+    private SeekBar threshold_slider;
+    private ProgressBar progress;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -68,13 +81,13 @@ public class RecordData extends Fragment implements SensorEventListener{
             gestureId = getArguments().getString(ARG_PARAM2);
         }
 
-        // TODO : Remove this relation and all relavent sensor data if exists to avoid multiple readings
-
         People peopleRepo = People.newInstance();
         Gestures gestureRepo = Gestures.newInstance();
         try {
             me = peopleRepo.getQuery().get(meId);
             gesture = gestureRepo.getQuery().get(gestureId);
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("PersonGestures");
 
             ParseRelation relation = personGesture.getRelation("gesture");
             relation.add(gesture);
@@ -88,7 +101,6 @@ public class RecordData extends Fragment implements SensorEventListener{
 
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override
@@ -120,6 +132,57 @@ public class RecordData extends Fragment implements SensorEventListener{
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ((TextView) getActivity().findViewById(R.id.gesture_name)).setText(gesture.getName());
+
+        threshold_slider = (SeekBar) getActivity().findViewById(R.id.threshold_slider);
+        threshold_slider.setOnSeekBarChangeListener(this);
+
+        threshold = (TextView) getActivity().findViewById(R.id.threshold);
+        threshold.setText(String.valueOf(threshold_slider.getProgress()));
+
+        progress = (ProgressBar) getActivity().findViewById(R.id.progress);
+
+        hold_to_send = (ButtonRectangle) getActivity().findViewById(R.id.hold_to_record);
+        hold_to_send.setOnTouchListener(this);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        threshold.setText(String.valueOf(seekBar.getProgress()));
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+
+            case MotionEvent.ACTION_DOWN:
+                v.setPressed(true);
+                recordData = true;
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                v.setPressed(false);
+                recordData = false;
+                numSamples += 1;
+                progress.setProgress(progress.getProgress() + 100/Config.numSamples);
+                if (numSamples == Config.numSamples) {
+                    hold_to_send.setOnTouchListener(null);
+                    saveData();
+                }
+                break;
+            default:
+                break;
+        }
+
+        return true;
     }
 
     @Override
@@ -128,26 +191,20 @@ public class RecordData extends Fragment implements SensorEventListener{
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        Log.e("ACCELEROMETER", "ACC: x=" + event.values[0] + " y=" + event.values[1] + " z=" + event.values[2]);
-        // Do something here to threshold values and increment counter so as to read 5 samples and save in bg
-        if (passesThreshold(event)) {
-            numSamples += 1;
-            sensorValues.add(new SensorValue(event));
-
-            if (numSamples == Config.numSamples) {
-                sensorManager.unregisterListener(this);
-                saveData();
-            }
+        if (recordData) {
+            sensorValues.add(new SensorValue(String.valueOf(event.timestamp), event));
         }
     }
 
-    public boolean passesThreshold(SensorEvent event) {
-        // TODO
-        return true;
+    public double mod(SensorEvent event) {
+        double mod = Math.pow(event.values[0], 2) + Math.pow(event.values[1], 2) + Math.pow(event.values[2], 2);
+        mod = Math.pow(mod, 0.5);
+        return mod;
     }
 
     public void saveData() {
         ((TextView) getActivity().findViewById(R.id.gesture_name)).setText("Saving Data");
+
         personGesture.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -176,27 +233,6 @@ public class RecordData extends Fragment implements SensorEventListener{
                 });
             }
         });
-    }
-
-    /**
-     * Repository Interactions
-     */
-
-    public void onGesturesStatusFound(List<Gesture> gestures) {
-
-    }
-
-    public void onGestureStatusFindException(ParseException e) {
-        e.printStackTrace();
-    }
-
-
-    public void onSensorValuesFound(List<SensorValue> sensorValues) {
-
-    }
-
-    public void onSensorValueFindException(ParseException e) {
-        e.printStackTrace();
     }
 
     public interface OnFragmentInteractionListener {

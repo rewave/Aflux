@@ -15,16 +15,25 @@ public class SensorValue extends ParseObject {
 
     }
 
-    public SensorValue(SensorEvent sensorEvent) {
+    public SensorValue(String timestamp, SensorEvent sensorEvent) {
         this.sensorEvent = sensorEvent;
         setAx(sensorEvent.values[0]);
         setAy(sensorEvent.values[1]);
         setAz(sensorEvent.values[2]);
+        setTime(timestamp);
     }
 
     public void setPersonGesture(ParseObject personGesture) {
         ParseRelation relation = this.getRelation("person_gesture");
         relation.add(personGesture);
+    }
+
+    public void setTime(String timestamp) {
+        put("time", timestamp);
+    }
+
+    public String getTime() {
+        return getString("time");
     }
 
     public void setAx(float ax) {

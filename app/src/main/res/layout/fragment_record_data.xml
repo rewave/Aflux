@@ -2,9 +2,24 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_gravity="left|top"
-    android:padding="50dp"
     android:gravity="center_vertical"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:dividerPadding="10dp"
+    android:paddingRight="20dp"
+    android:paddingLeft="20dp">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp">
+
+        <com.gc.materialdesign.views.ButtonRectangle
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hold_to_record"
+            android:background="@color/primary"
+            android:id="@+id/hold_to_record" />
+        </LinearLayout>
 
     <TextView
         android:id="@+id/gesture_name"
@@ -15,11 +30,36 @@
         android:textSize="30sp"
         android:text="@string/loading" />
 
-    <com.gc.materialdesign.views.ProgressBarDeterminate
-        android:id="@+id/progress"
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary" />
+        android:indeterminate="false"
+        android:max="100"
+        android:id="@+id/progress" />
 
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+
+        <SeekBar
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/threshold_slider"
+            android:layout_weight="1"
+            android:max="100"
+            android:progress="25"
+            android:indeterminate="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/threshold"
+            android:padding="5dp"
+            android:width="40dp" />
+
+    </LinearLayout>
 </LinearLayout>
 
