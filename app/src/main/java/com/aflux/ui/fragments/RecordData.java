@@ -43,7 +43,7 @@ public class RecordData extends Fragment implements SensorEventListener, View.On
     private Person me;
     private String gestureId;
     private Gesture gesture;
-    private int numSamples = 0;
+    private int numSamples = 1;
     private List<SensorValue> sensorValues = new ArrayList<>();
     private SensorManager sensorManager;
     private Sensor accelerometer;
@@ -87,6 +87,7 @@ public class RecordData extends Fragment implements SensorEventListener, View.On
 
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override
@@ -110,6 +111,9 @@ public class RecordData extends Fragment implements SensorEventListener, View.On
     @Override
     public void onDetach() {
         super.onDetach();
+        sensorValues = null;
+        accelerometer = null;
+        gesture = null;
         sensorManager.unregisterListener(this);
         mListener = null;
     }
@@ -135,7 +139,6 @@ public class RecordData extends Fragment implements SensorEventListener, View.On
             case MotionEvent.ACTION_UP:
                 v.setPressed(false);
                 recordData = false;
-                Log.i(TAG, "calling save data " + String.valueOf(numSamples));
                 saveData(me, gesture, numSamples, sensorValues);
                 sensorValues = new ArrayList<>();
                 if (numSamples == Config.numSamples) {
@@ -194,7 +197,7 @@ public class RecordData extends Fragment implements SensorEventListener, View.On
                         public void done(ParseException e) {
                             if (e == null) {
                                 ((TextView) getActivity().findViewById(R.id.status)).setText("Sensor Values " + String.valueOf(sample_number) + " saved");
-                                progress.setProgress(progress.getProgress() + 100/Config.numSamples);
+                                progress.setProgress(progress.getProgress() + 100 / Config.numSamples);
                                 if (sample_number == Config.numSamples) {
                                     // all data saved, go back
                                     getActivity().onBackPressed();

@@ -86,6 +86,7 @@ public class RemainingGestures extends Fragment implements Gestures.OnRepository
     @Override
     public void onDetach() {
         super.onDetach();
+        gestures = null;
         mListener = null;
     }
 
