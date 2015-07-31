@@ -34,10 +34,11 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Parse.enableLocalDatastore(this);
         ParseObject.registerSubclass(Person.class);
         ParseObject.registerSubclass(Gesture.class);
         ParseObject.registerSubclass(SensorValue.class);
+
+        Parse.enableLocalDatastore(getApplicationContext());
         Parse.initialize(this, Config.parse_app_id, Config.parse_client_key);
 
         if (savedInstanceState == null) {
@@ -68,7 +69,7 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
                     savedMe.saveInBackground();
 
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, RemainingGestures.newInstance(meId))
+                            .replace(R.id.container, RemainingGestures.newInstance(meId, "no"))
                             .addToBackStack(RemainingGestures.class.getName())
                             .commit();
                 } else {
@@ -93,7 +94,7 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
                         String meId = me.getObjectId();
                         setTitle((String) me.get("name"));
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.container, RemainingGestures.newInstance(meId))
+                                .replace(R.id.container, RemainingGestures.newInstance(meId, "yes")) // resume yes
                                 .addToBackStack(RemainingGestures.class.getName())
                                 .commit();
                     } else {
@@ -118,15 +119,6 @@ public class MainActivity extends ActionBarActivity implements Metadata.OnFragme
         float power = accelerometer.getPower();
         float resolution = accelerometer.getResolution();
         String vendor = accelerometer.getVendor();
-
-        Log.i(TAG, "manufacturer " + manufacturer);
-        Log.i(TAG, "model " + model);
-        Log.i(TAG, "minDelay " + String.valueOf(minDelay));
-        Log.i(TAG, "maxRange " + String.valueOf(maxRange));
-        Log.i(TAG, "name " + String.valueOf(name));
-        Log.i(TAG, "power " + String.valueOf(power));
-        Log.i(TAG, "resolution " + String.valueOf(resolution));
-        Log.i(TAG, "vendor " + String.valueOf(vendor));
 
         me.setDeviceManufacturer(manufacturer);
         me.setDeviceModel(model);

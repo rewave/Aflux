@@ -25,19 +25,24 @@ import java.util.List;
 public class RemainingGestures extends Fragment implements Gestures.OnRepositoryInteractionListener, People.OnRepositoryInteractionListener, AdapterView.OnItemClickListener{
 
     private static final String ARG_PARAM1 = "meId";
+    private static final String ARG_PARAM2 = "resume";
     private final Gestures gestureRepo = Gestures.newInstance(this);
 
     private String meId;
+    private boolean resume = false;
     private Person me;
     private List<Gesture> gestures;
     private final static String TAG = "RGFragment";
 
     private OnFragmentInteractionListener mListener;
 
-    public static RemainingGestures newInstance(String meId) {
+
+
+    public static RemainingGestures newInstance(String meId, String resume) {
         RemainingGestures fragment = new RemainingGestures();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, meId);
+        args.putString(ARG_PARAM2, resume);
         fragment.setArguments(args);
         return fragment;
     }
@@ -51,11 +56,10 @@ public class RemainingGestures extends Fragment implements Gestures.OnRepository
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             meId = getArguments().getString(ARG_PARAM1);
-            try {
-                me = ParseQuery.getQuery(Person.class).get(meId);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            me = Person.createWithoutData(Person.class, meId);
+
+            resume = getArguments().getString(ARG_PARAM2).equals("yes");
+            Log.i(TAG, "Resume " + String.valueOf(resume));
         }
     }
 
@@ -98,7 +102,17 @@ public class RemainingGestures extends Fragment implements Gestures.OnRepository
     public void onGesturesFound(List<Gesture> gestures) {
         People peopleRepository = People.newInstance(this);
         this.gestures = gestures;
-        peopleRepository.findGesturesStatus(me, gestures); // calls onGesturesStatusFound() on completion
+        if (resume) {
+            Log.i(TAG, "In resume");
+            peopleRepository.findGesturesStatus(me, gestures); // calls onGesturesStatusFound() on completion
+            resume = false;
+        } else {
+            Log.i(TAG, "In no resume");
+            ListView remainingGesturesList = (ListView) getActivity().findViewById(R.id.gestures_list);
+            RemainingGesturesAdapter remainingGesturesAdapter = new RemainingGesturesAdapter(getActivity(), gestures);
+            remainingGesturesList.setAdapter(remainingGesturesAdapter);
+            remainingGesturesList.setOnItemClickListener(this);
+        }
     }
 
     @Override
@@ -107,18 +121,11 @@ public class RemainingGestures extends Fragment implements Gestures.OnRepository
     }
 
     @Override
-    public void onSensorValuesFound(List<SensorValue> sensorValues) {}
-
-    @Override
-    public void onSensorValueFindException(ParseException e) {
-        e.printStackTrace();
-    }
-
-    @Override
     public void onPeopleFound(List<Person> people){}
 
     @Override
     public void onGesturesStatusFound(List<Gesture> gestures) {
+        Log.d(TAG, "Listner called");
         ListView remainingGesturesList = (ListView) getActivity().findViewById(R.id.gestures_list);
         RemainingGesturesAdapter remainingGesturesAdapter = new RemainingGesturesAdapter(getActivity(), gestures);
         remainingGesturesList.setAdapter(remainingGesturesAdapter);
@@ -127,7 +134,10 @@ public class RemainingGestures extends Fragment implements Gestures.OnRepository
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
-        mListener.onGestureClicked(meId, gestures.get(position).getObjectId());
+        Gesture g = gestures.get(position);
+        g.setStatus(true);
+        g.saveInBackground();
+        mListener.onGestureClicked(meId, g.getObjectId());
     }
 
     public interface OnFragmentInteractionListener {

@@ -2,6 +2,7 @@ package com.aflux.repository;
 
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.widget.ListView;
 
 import com.aflux.core.Gesture;
 import com.aflux.core.Person;
@@ -89,6 +90,7 @@ public class People implements Person.OnCoreInteractionListener{
                         }
                     }
 
+                    Log.d(TAG, "Gesture status found, calling listerns");
                     mListener.onGesturesStatusFound(gestures);
                     /*
                      * Functional way:
@@ -100,6 +102,33 @@ public class People implements Person.OnCoreInteractionListener{
                 }
             }
         });
+    }
+
+    public void findGesturesStatusNew(Person me, final List<Gesture> gestures) {
+//        Log.i(TAG, "Find gesture status called");
+//        ParseQuery<ParseObject> query = ParseQuery.getQuery("PersonGestures");
+//        query.whereEqualTo("person", me);
+//        query.whereContainedIn("gesture", gestures);
+//        query.fromLocalDatastore().findInBackground(new FindCallback<ParseObject>() {
+//            @Override
+//            public void done(List<ParseObject> parseObjects, ParseException e) {
+//                ParseObject.pinAllInBackground(parseObjects);
+//                if (e != null) {
+//                    e.printStackTrace();
+//                    return;
+//                }
+//                for (ParseObject p : parseObjects) {
+//                    try {
+//                        gestures.get(gestures.indexOf(p.getRelation("gesture").getQuery().getFirst())).setStatus(true);
+//                    } catch (ParseException e1) {
+//                        e1.printStackTrace();
+//                    }
+//                }
+//                mListener.onGesturesStatusFound(gestures);
+//            }
+//        });
+        mListener.onGesturesStatusFound(gestures);
+
     }
 
     public void setPersonGesture(Person p, Gesture g, int sample_number) {

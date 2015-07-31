@@ -139,6 +139,7 @@ public class RecordData extends Fragment implements SensorEventListener, View.On
             case MotionEvent.ACTION_UP:
                 v.setPressed(false);
                 recordData = false;
+                Log.i(TAG, "Calling saveData");
                 saveData(me, gesture, numSamples, sensorValues);
                 sensorValues = new ArrayList<>();
                 if (numSamples == Config.numSamples) {
@@ -196,7 +197,11 @@ public class RecordData extends Fragment implements SensorEventListener, View.On
                         @Override
                         public void done(ParseException e) {
                             if (e == null) {
-                                ((TextView) getActivity().findViewById(R.id.status)).setText("Sensor Values " + String.valueOf(sample_number) + " saved");
+                                try {
+                                    ((TextView) getActivity().findViewById(R.id.status)).setText("Sensor Values " + String.valueOf(sample_number) + " saved");
+                                } catch (NullPointerException e1) {
+                                    e1.printStackTrace();
+                                }
                                 progress.setProgress(progress.getProgress() + 100 / Config.numSamples);
                                 if (sample_number == Config.numSamples) {
                                     // all data saved, go back
